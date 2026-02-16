@@ -29,6 +29,16 @@
                      </accelerator></MenuItem>
                   <MenuItem mnemonicParsing="false" onAction="#handleSaveAs" text="SaveAs..." />
                   <MenuItem mnemonicParsing="false" onAction="#handleExit" text="Exit" />
+                  <MenuItem mnemonicParsing="false" onAction="#handleImportCsv" text="Import CSV...">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="O" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator>
+                  </MenuItem>
+                  <MenuItem mnemonicParsing="false" onAction="#handleExportCsv" text="Export CSV...">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="O" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator>
+                  </MenuItem>
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Edit">

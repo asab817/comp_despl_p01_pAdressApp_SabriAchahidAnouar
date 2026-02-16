@@ -7,6 +7,7 @@ import java.util.List;
 
 // IMPORTS DE TUS CLASES (Ajusta si los paquetes varían ligeramente)
 import es.damdi.mainapp.comp_despl_p01_padressapp_sabriachahidanouar.model.Person;
+import es.damdi.mainapp.comp_despl_p01_padressapp_sabriachahidanouar.persistence.CsvPersonRepository;
 import es.damdi.mainapp.comp_despl_p01_padressapp_sabriachahidanouar.view.PersonEditDialogController;
 import es.damdi.mainapp.comp_despl_p01_padressapp_sabriachahidanouar.view.PersonOverviewController;
 import es.damdi.mainapp.comp_despl_p01_padressapp_sabriachahidanouar.persistence.JacksonPersonRepository;
@@ -43,6 +44,9 @@ public class MainApp extends Application {
      * Los datos como una lista observable de Personas.
      */
     private ObservableList<Person> personData = FXCollections.observableArrayList();
+
+    // Instancia del repositorio CSV
+    private final PersonRepository csvRepository = new CsvPersonRepository();
 
     /**
      * Constructor: Añade datos de ejemplo.
@@ -159,10 +163,6 @@ public class MainApp extends Application {
         }
     }
 
-    // =====================================================================
-    //  NUEVOS MÉTODOS DE PERSISTENCIA Y PREFERENCIAS (PARTE 5 - PDF)
-    // =====================================================================
-
     public File getPersonFilePath() {
         return personFilePath;
     }
@@ -229,6 +229,31 @@ public class MainApp extends Application {
                 }
             }
         });
+    }
+
+    /**
+     * Importa datos desde un archivo CSV.
+     */
+    public void importCsv(File file) {
+        try {
+            List<Person> list = csvRepository.load(file);
+            // Añadimos a la lista existente (o usa setAll para reemplazar)
+            personData.addAll(list);
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Aquí podrías mostrar una alerta de error si quieres
+        }
+    }
+
+    /**
+     * Exporta los datos actuales a un archivo CSV.
+     */
+    public void exportCsv(File file) {
+        try {
+            csvRepository.save(file, new ArrayList<>(personData));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public Stage getPrimaryStage() {

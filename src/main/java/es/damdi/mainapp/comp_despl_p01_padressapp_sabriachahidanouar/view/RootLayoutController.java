@@ -106,9 +106,6 @@ public class RootLayoutController {
         System.exit(0);
     }
 
-    // ========================================================================
-    // MÉTODOS AUXILIARES (LÓGICA DEL PDF)
-    // ========================================================================
 
     /**
      * Intenta guardar. Si no hay archivo, llama a Save As.
@@ -218,5 +215,34 @@ public class RootLayoutController {
         alert.setHeaderText(header);
         alert.setContentText(content + "\n\n" + e.getMessage());
         alert.showAndWait();
+    }
+
+
+    @FXML
+    private void handleImportCsv() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Import CSV");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV files (*.csv)", "*.csv"));
+
+        File file = fileChooser.showOpenDialog(mainApp.getPrimaryStage());
+        if (file != null) {
+            mainApp.importCsv(file);
+        }
+    }
+
+    @FXML
+    private void handleExportCsv() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Export CSV");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV files (*.csv)", "*.csv"));
+
+        File file = fileChooser.showSaveDialog(mainApp.getPrimaryStage());
+        if (file != null) {
+            // Asegurar extensión .csv
+            if (!file.getPath().toLowerCase().endsWith(".csv")) {
+                file = new File(file.getPath() + ".csv");
+            }
+            mainApp.exportCsv(file);
+        }
     }
 }
