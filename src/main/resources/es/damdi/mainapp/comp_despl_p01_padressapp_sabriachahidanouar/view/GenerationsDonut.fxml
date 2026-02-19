@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.StackPane?>
+
+<StackPane fx:id="pane" prefHeight="500.0" prefWidth="600.0" style="-fx-background-color: #1d1d1d;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="es.damdi.mainapp.comp_despl_p01_padressapp_sabriachahidanouar.view.GenerationsDonutController">
+</StackPane>

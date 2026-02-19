@@ -8,6 +8,7 @@ import java.util.List;
 // IMPORTS DE TUS CLASES (Ajusta si los paquetes varían ligeramente)
 import es.damdi.mainapp.comp_despl_p01_padressapp_sabriachahidanouar.model.Person;
 import es.damdi.mainapp.comp_despl_p01_padressapp_sabriachahidanouar.persistence.CsvPersonRepository;
+import es.damdi.mainapp.comp_despl_p01_padressapp_sabriachahidanouar.view.GenerationsDonutController;
 import es.damdi.mainapp.comp_despl_p01_padressapp_sabriachahidanouar.view.PersonEditDialogController;
 import es.damdi.mainapp.comp_despl_p01_padressapp_sabriachahidanouar.view.PersonOverviewController;
 import es.damdi.mainapp.comp_despl_p01_padressapp_sabriachahidanouar.persistence.JacksonPersonRepository;
@@ -82,7 +83,6 @@ public class MainApp extends Application {
         initRootLayout();
         showPersonOverview();
 
-        // --- NUEVO: Cargar último archivo al arrancar ---
         loadOnStartup();
     }
 
@@ -252,6 +252,114 @@ public class MainApp extends Application {
         try {
             csvRepository.save(file, new ArrayList<>(personData));
         } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Abre un diálogo para mostrar las estadísticas de cumpleaños.
+     */
+    public void showBirthdayStatistics() {
+        try {
+            // Carga el archivo FXML
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(MainApp.class.getResource("view/BirthdayStatistics.fxml"));
+            AnchorPane page = (AnchorPane) loader.load();
+
+            // Crea el escenario (Stage)
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Birthday Statistics");
+            dialogStage.initModality(Modality.NONE);
+//            dialogStage.initOwner(primaryStage);
+            // Añadir icono también a esta ventana
+            dialogStage.getIcons().add(new Image(MainApp.class.getResourceAsStream("/images/address_book_32.png")));
+
+            Scene scene = new Scene(page);
+            // Opcional: añadir CSS si usas Bootstrap
+            scene.getStylesheets().add(BootstrapFX.bootstrapFXStylesheet());
+            dialogStage.setScene(scene);
+
+            // Pasa los datos al controlador
+            es.damdi.mainapp.comp_despl_p01_padressapp_sabriachahidanouar.view.BirthdayStatisticsController controller = loader.getController();
+            controller.setPersonData(personData);
+
+            dialogStage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void showPieChartStatistics() {
+        try {
+            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader();
+            loader.setLocation(MainApp.class.getResource("view/PieChartStatistics.fxml"));
+            javafx.scene.layout.AnchorPane page = (javafx.scene.layout.AnchorPane) loader.load();
+
+            javafx.stage.Stage dialogStage = new javafx.stage.Stage();
+            dialogStage.setTitle("Estadísticas: Generaciones");
+
+            // 1. Mantenemos el NONE para que no bloquee (Dinámico)
+            dialogStage.initModality(javafx.stage.Modality.NONE);
+
+            // 2. ¡BORRAMOS O COMENTAMOS ESTA LÍNEA!
+            // dialogStage.initOwner(primaryStage);
+
+            javafx.scene.Scene scene = new javafx.scene.Scene(page);
+            scene.getStylesheets().add(getClass().getResource("view/DarkTheme.css").toExternalForm());
+            dialogStage.setScene(scene);
+
+            es.damdi.mainapp.comp_despl_p01_padressapp_sabriachahidanouar.view.PieChartStatisticsController controller = loader.getController();
+            controller.setPersonData(personData);
+
+            dialogStage.show();
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // --- GRÁFICO DE LÍNEA (AÑOS) ---
+    public void showLineChartStatistics() {
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(MainApp.class.getResource("view/LineChartStatistics.fxml"));
+            AnchorPane page = (AnchorPane) loader.load();
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Estadísticas: Línea Temporal");
+            dialogStage.initModality(Modality.NONE);
+//            dialogStage.initOwner(primaryStage);
+            dialogStage.getIcons().add(new Image(MainApp.class.getResourceAsStream("/images/address_book_32.png")));
+            Scene scene = new Scene(page);
+            dialogStage.setScene(scene);
+
+            es.damdi.mainapp.comp_despl_p01_padressapp_sabriachahidanouar.view.LineChartStatisticsController controller = loader.getController();
+            controller.setPersonData(personData);
+
+            dialogStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void showGenerationsDonut() {
+        try {
+            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader();
+            loader.setLocation(MainApp.class.getResource("view/GenerationsDonut.fxml"));
+            javafx.scene.layout.StackPane page = (javafx.scene.layout.StackPane) loader.load();
+
+            javafx.stage.Stage dialogStage = new javafx.stage.Stage();
+            dialogStage.setTitle("Generaciones (TilesFX)");
+            dialogStage.initModality(javafx.stage.Modality.NONE); // Sigue siendo dinámico!
+
+            // Fíjate que AQUÍ NO ponemos scene.getStylesheets().add(...)
+            javafx.scene.Scene scene = new javafx.scene.Scene(page);
+            dialogStage.setScene(scene);
+
+            es.damdi.mainapp.comp_despl_p01_padressapp_sabriachahidanouar.view.GenerationsDonutController controller = loader.getController();
+            controller.setPersonData(personData);
+
+            dialogStage.show();
+        } catch (java.io.IOException e) {
             e.printStackTrace();
         }
     }

@@ -1,6 +1,9 @@
 package es.damdi.mainapp.comp_despl_p01_padressapp_sabriachahidanouar.view;
 
 import java.io.File;
+
+import es.damdi.mainapp.comp_despl_p01_padressapp_sabriachahidanouar.model.Person;
+import es.damdi.mainapp.comp_despl_p01_padressapp_sabriachahidanouar.persistence.CsvPersonRepository;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
@@ -9,6 +12,7 @@ import javafx.stage.FileChooser;
 import es.damdi.mainapp.comp_despl_p01_padressapp_sabriachahidanouar.MainApp;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -219,30 +223,126 @@ public class RootLayoutController {
 
 
     @FXML
-    private void handleImportCsv() {
+    private void handleExportCsv() {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Import CSV");
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV files (*.csv)", "*.csv"));
+        fileChooser.setTitle("Exportar CSV");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archivos CSV", "*.csv"));
 
-        File file = fileChooser.showOpenDialog(mainApp.getPrimaryStage());
+        File file = fileChooser.showSaveDialog(mainApp.getPrimaryStage());
+
         if (file != null) {
-            mainApp.importCsv(file);
+            if (!file.getPath().toLowerCase().endsWith(".csv")) {
+                file = new File(file.getPath() + ".csv");
+            }
+
+            try {
+                // CHIVATO: ¿Cuántos datos hay realmente?
+                int cantidad = mainApp.getPersonData().size();
+                System.out.println("DEBUG: El controlador ve " + cantidad + " personas en la lista.");
+
+                if (cantidad == 0) {
+                    Alert alert = new Alert(Alert.AlertType.WARNING);
+                    alert.setTitle("Aviso");
+                    alert.setHeaderText("Lista vacía");
+                    alert.setContentText("No hay personas en la tabla para exportar.");
+                    alert.showAndWait();
+                    return; // No guardamos si está vacío para no generar un archivo corrupto
+                }
+
+                es.damdi.mainapp.comp_despl_p01_padressapp_sabriachahidanouar.persistence.CsvPersonRepository csvRepo =
+                        new es.damdi.mainapp.comp_despl_p01_padressapp_sabriachahidanouar.persistence.CsvPersonRepository();
+
+                csvRepo.save(file, mainApp.getPersonData());
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText("Error al exportar");
+                alert.setContentText("Detalles: " + e.getMessage());
+                alert.showAndWait();
+            }
         }
     }
 
     @FXML
-    private void handleExportCsv() {
+    private void handleImportCsv() {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Export CSV");
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV files (*.csv)", "*.csv"));
+        fileChooser.setTitle("Importar CSV");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archivos CSV", "*.csv"));
 
-        File file = fileChooser.showSaveDialog(mainApp.getPrimaryStage());
+        File file = fileChooser.showOpenDialog(mainApp.getPrimaryStage());
+
         if (file != null) {
-            // Asegurar extensión .csv
-            if (!file.getPath().toLowerCase().endsWith(".csv")) {
-                file = new File(file.getPath() + ".csv");
+            try {
+                es.damdi.mainapp.comp_despl_p01_padressapp_sabriachahidanouar.persistence.CsvPersonRepository csvRepo =
+                        new es.damdi.mainapp.comp_despl_p01_padressapp_sabriachahidanouar.persistence.CsvPersonRepository();
+
+                java.util.List<es.damdi.mainapp.comp_despl_p01_padressapp_sabriachahidanouar.model.Person> personas = csvRepo.load(file);
+
+                System.out.println("DEBUG: Se han leído " + personas.size() + " personas del archivo.");
+
+                // Añadimos a la tabla
+                mainApp.getPersonData().addAll(personas);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText("Error al importar");
+                alert.setContentText("Detalles: " + e.getMessage());
+                alert.showAndWait();
             }
-            mainApp.exportCsv(file);
         }
     }
+
+
+    @FXML
+    private void handleShowBirthdayStatistics() {
+        mainApp.showBirthdayStatistics();
+    }
+
+    @FXML
+    private void handleShowPieChart() {
+        mainApp.showPieChartStatistics();
+    }
+
+    @FXML
+    private void handleShowLineChart() {
+        mainApp.showLineChartStatistics();
+    }
+    @FXML
+    private void handleShowDonut() {
+        // En lugar del donut roto, abrimos el nuevo gráfico nativo
+        mainApp.showGenerationsDonut();
+    }
+
+    // Método para Markdown (si no lo tenías separado)
+    @FXML
+    private void handleHelpMarkdown() {
+        es.damdi.mainapp.comp_despl_p01_padressapp_sabriachahidanouar.view.help.MarkdownHelp help =
+                new es.damdi.mainapp.comp_despl_p01_padressapp_sabriachahidanouar.view.help.MarkdownHelp();
+        help.show();
+    }
+
+
+    // --- MÉTODOS DE AYUDA (Pégalos al final de RootLayoutController) ---
+
+    @FXML
+    private void handleHelp() {
+        // Por defecto abre HTML o Markdown (el que prefieras)
+        es.damdi.mainapp.comp_despl_p01_padressapp_sabriachahidanouar.view.help.MarkdownHelp help =
+                new es.damdi.mainapp.comp_despl_p01_padressapp_sabriachahidanouar.view.help.MarkdownHelp();
+        help.show();
+    }
+
+
+    @FXML
+    private void handleHelpPdf() {
+        es.damdi.mainapp.comp_despl_p01_padressapp_sabriachahidanouar.view.help.PDFHelpViewer pdfHelp =
+                new es.damdi.mainapp.comp_despl_p01_padressapp_sabriachahidanouar.view.help.PDFHelpViewer();
+        pdfHelp.show();
+    }
+
+
 }
