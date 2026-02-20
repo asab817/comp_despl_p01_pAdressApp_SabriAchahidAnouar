@@ -9,7 +9,7 @@
     <version>1.0-RELEASE</version>
     <name>AddressAppV2</name>
     <description>Aplicación de direcciones en JavaFX con Maven</description>
-    <url>https://github.com/isabelcayuelaperez/maven_basico</url>
+    <url>https://github.com/asab817/comp_despl_p01_pAdressApp_SabriAchahidAnouar.git</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
